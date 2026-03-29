@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UKSD - SUGGESTIONS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=VT323&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:  #1c5a8a;
+  --accent2: #2878b5;
+  --panel:   rgba(222,240,255,0.84);
+  --panel2:  rgba(205,230,252,0.78);
+  --border:  rgba(28,90,138,0.2);
+  --text:    #0d2d45;
+  --textdim: #3a6a8a;
+  --white:   #f0f8ff;
+}
+
+html { scroll-behavior: smooth; }
+
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.selectable,
+.selectable * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+body {
+  background: linear-gradient(160deg, #a8d0ed 0%, #c3e0f7 35%, #d8edfb 65%, #b5d4ee 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'VT323', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#particlesCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 12px 60px;
+  perspective: 1000px;
+}
+
+.top-stripe {
+  background: var(--accent);
+  color: rgba(210,235,255,0.9);
+  font-family: 'VT323', monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  padding: 5px 0;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.marquee-text {
+  display: inline-block;
+  animation: mscroll 22s linear infinite;
+}
+
+@keyframes mscroll {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+.outer {
+  background: rgba(214,236,252,0.5);
+  backdrop-filter: blur(3px);
+  border: 1.5px solid rgba(28,90,138,0.18);
+  border-top: 3px solid var(--accent);
+  box-shadow: 0 15px 35px rgba(28,90,138,0.2), 0 5px 15px rgba(28,90,138,0.1);
+  overflow: hidden;
+  margin-top: 26px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tab-bar {
+  display: flex;
+  background: rgba(20,65,100,0.95);
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.tab-btn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  color: rgba(210,235,255,0.5);
+  padding: 9px 22px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: rgba(240,248,255,0.85);
+}
+
+.tab-btn.active {
+  color: var(--white);
+  border-bottom: 3px solid var(--white);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeUp 0.35s ease;
+}
+
+.header-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 35px 20px 25px;
+  border-bottom: 2px solid var(--border);
+  background: var(--panel2);
+}
+
+.pfp-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.pfp-wrap:hover {
+  transform: scale(1.05) rotate(-3deg);
+}
+
+.pfp-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  mask-image: radial-gradient(ellipse 88% 88% at 50% 50%, black 35%, rgba(0,0,0,0.55) 58%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 88% 88% at 50% 50%, black 35%, rgba(0,0,0,0.55) 58%, transparent 100%);
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.pfp-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  border: 2px solid rgba(28,90,138,0.45);
+  pointer-events: none;
+}
+
+.site-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  margin-top: 18px;
+  text-shadow: 2px 2px 0 rgba(28,90,138,0.18), 3px 3px 0 rgba(28,90,138,0.1);
+}
+
+.full-panel {
+  background: var(--panel);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-area {
+  width: 100%;
+  min-height: 150px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.input-area:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.input-area::placeholder {
+  color: rgba(28,90,138,0.5);
+}
+
+.submit-btn {
+  background: var(--accent);
+  color: var(--white);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.submit-btn:hover {
+  background: var(--accent2);
+  transform: translateY(-2px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.footer-stripe {
+  background: var(--accent);
+  color: rgba(185,220,250,0.75);
+  font-size: 0.98rem;
+  letter-spacing: 0.14em;
+  text-align: center;
+  padding: 7px 0;
+}
+
+.work-grid {
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.work-grid::-webkit-scrollbar { width: 6px; }
+.work-grid::-webkit-scrollbar-track { background: rgba(28,90,138,0.05); }
+.work-grid::-webkit-scrollbar-thumb { background: rgba(28,90,138,0.28); border-radius: 3px; }
+.work-grid::-webkit-scrollbar-thumb:hover { background: rgba(28,90,138,0.5); }
+
+.sugg-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--panel2);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  padding: 12px;
+}
+
+.sugg-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 22px rgba(28,90,138,0.35);
+  border-color: var(--accent2);
+}
+
+.sugg-preview {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  color: var(--textdim);
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.thumb-hover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(222,240,255,0.85);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sugg-card:hover .thumb-hover { opacity: 1; }
+
+.thumb-play {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 0.95rem;
+}
+
+.thumb-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.lb-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 15, 30, 0.88);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.38s ease;
+  backdrop-filter: blur(4px);
+}
+
+.lb-backdrop.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lb-card {
+  position: fixed;
+  z-index: 1000;
+  background: #0a1a2e;
+  border: 1.5px solid rgba(28,90,138,0.5);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  will-change: transform, top, left, width, height;
+}
+
+.lb-card.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lb-text-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--white);
+  padding: 30px;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.lb-content {
+  font-family: 'VT323', monospace;
+  font-size: 1.6rem;
+  color: var(--text);
+  line-height: 1.6;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+.lb-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: rgba(12,28,55,0.95);
+  border-top: 1px solid rgba(28,90,138,0.3);
+  flex-shrink: 0;
+}
+
+.lb-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--accent2);
+}
+
+.lb-close {
+  background: none;
+  border: none;
+  color: rgba(200,225,255,0.6);
+  font-size: 1.05rem;
+  font-family: 'VT323', monospace;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.lb-close:hover {
+  color: rgba(240,248,255,1);
+  background: rgba(28,90,138,0.3);
+}
+
+@media (max-width: 520px) {
+  .work-grid { grid-template-columns: repeat(2, 1fr); }
+  .outer { transform: none !important; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+.d1 { animation-delay: 0.04s; }
+.d2 { animation-delay: 0.1s; }
+.d3 { animation-delay: 0.18s; }
+.d4 { animation-delay: 0.26s; }
+
+</style>
+</head>
+<body>
+
+<canvas id="particlesCanvas"></canvas>
+
+<div class="page">
+
+  <div class="top-stripe fade d1">
+    <span class="marquee-text">
+      UKSD SUGGESTIONS ✦ ANONYMOUS ✦ TELL US WHAT TO ADD ✦ YOUR IDEAS MATTER ✦&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      UKSD SUGGESTIONS ✦ ANONYMOUS ✦ TELL US WHAT TO ADD ✦ YOUR IDEAS MATTER ✦
+    </span>
+  </div>
+
+  <div class="outer" id="mainCard">
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="submit">SUBMIT</button>
+      <button class="tab-btn" data-tab="view">SUGGESTIONS</button>
+    </div>
+
+    <div class="tab-content active" id="tab-submit">
+      <div class="header-block fade d2">
+        <div class="pfp-wrap">
+          <div class="pfp-ring"></div>
+          <img src="pic.png" alt="UKSD">
+        </div>
+        <div class="site-title">UKSD - SUGGESTIONS</div>
+      </div>
+
+      <div class="full-panel fade d3">
+        <textarea id="suggestionInput" class="input-area selectable" placeholder="Write your anonymous suggestion here..."></textarea>
+        <button id="submitBtn" class="submit-btn">SEND SUGGESTION</button>
+      </div>
+
+      <div class="footer-stripe fade d4">
+        UKSD &nbsp;✦&nbsp; SECURE &nbsp;✦&nbsp; ANONYMOUS &nbsp;✦&nbsp; WE READ EVERYTHING
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-view">
+      <div class="work-grid" id="suggGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="lb-backdrop" id="lbBackdrop"></div>
+<div class="lb-card" id="lbCard">
+  <div class="lb-text-area">
+    <div class="lb-content selectable" id="lbTextContent"></div>
+  </div>
+  <div class="lb-footer">
+    <span class="lb-title" id="lbTitle">SUGGESTION 1</span>
+    <button class="lb-close" id="lbCloseBtn">[ CLOSE ]</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const CanvasEl = document.getElementById('particlesCanvas');
+  const Context2D = CanvasEl.getContext('2d');
+  const MainCardEl = document.getElementById('mainCard');
+
+  let ScreenWidth, ScreenHeight, ParticlesArray;
+  let MouseLocX = -1000;
+  let MouseLocY = -1000;
+
+  const ParticleCount = 85;
+  const MoveSpeed = 0.32;
+  const ConnectDist = 125;
+  const ConnectDistSq = ConnectDist * ConnectDist;
+  const MouseDist = 180;
+  const MouseDistSq = MouseDist * MouseDist;
+
+  let TargetRx = 0, TargetRy = 0, CurrentRx = 0, CurrentRy = 0;
+  let LbTargetRx = 0, LbTargetRy = 0, LbCurrentRx = 0, LbCurrentRy = 0;
+
+  function handleResize() {
+    ScreenWidth = CanvasEl.width = window.innerWidth;
+    ScreenHeight = CanvasEl.height = window.innerHeight;
+  }
+
+  function createParticle() {
+    return {
+      XPos: Math.random() * ScreenWidth,
+      YPos: Math.random() * ScreenHeight,
+      VelX: (Math.random() - 0.5) * MoveSpeed * 2,
+      VelY: (Math.random() - 0.5) * MoveSpeed * 2,
+    };
+  }
+
+  function initializeCanvas() {
+    handleResize();
+    ParticlesArray = Array.from({ length: ParticleCount }, createParticle);
+  }
+
+  function runRenderLoop() {
+    Context2D.clearRect(0, 0, ScreenWidth, ScreenHeight);
+
+    CurrentRx += (TargetRx - CurrentRx) * 0.1;
+    CurrentRy += (TargetRy - CurrentRy) * 0.1;
+
+    if (window.innerWidth > 520 && !IsLightboxOpen) {
+      MainCardEl.style.transform = `rotateX(${CurrentRx}deg) rotateY(${CurrentRy}deg)`;
+    }
+
+    if (IsLightboxOpen) {
+      LbCurrentRx += (LbTargetRx - LbCurrentRx) * 0.04;
+      LbCurrentRy += (LbTargetRy - LbCurrentRy) * 0.04;
+      LightboxCardEl.style.transform = `perspective(1400px) rotateX(${LbCurrentRx}deg) rotateY(${LbCurrentRy}deg)`;
+    }
+
+    for (let IndexOne = 0; IndexOne < ParticleCount; IndexOne++) {
+      const PartOne = ParticlesArray[IndexOne];
+
+      if (PartOne.XPos < 0 || PartOne.XPos > ScreenWidth) PartOne.VelX *= -1;
+      if (PartOne.YPos < 0 || PartOne.YPos > ScreenHeight) PartOne.VelY *= -1;
+      PartOne.XPos += PartOne.VelX;
+      PartOne.YPos += PartOne.VelY;
+
+      const DiffMouseX = PartOne.XPos - MouseLocX;
+      const DiffMouseY = PartOne.YPos - MouseLocY;
+      const DiffMouseSq = DiffMouseX * DiffMouseX + DiffMouseY * DiffMouseY;
+
+      if (DiffMouseSq < MouseDistSq) {
+        const DistVal = Math.sqrt(DiffMouseSq);
+        Context2D.beginPath();
+        Context2D.moveTo(PartOne.XPos, PartOne.YPos);
+        Context2D.lineTo(MouseLocX, MouseLocY);
+        Context2D.strokeStyle = `rgba(28,90,138,${(1 - DistVal / MouseDist) * 0.4})`;
+        Context2D.lineWidth = 1;
+        Context2D.stroke();
+        const ForceVal = (MouseDist - DistVal) / MouseDist;
+        PartOne.XPos += (DiffMouseX / DistVal) * ForceVal * 1.5;
+        PartOne.YPos += (DiffMouseY / DistVal) * ForceVal * 1.5;
+      }
+
+      Context2D.beginPath();
+      Context2D.arc(PartOne.XPos, PartOne.YPos, 2, 0, Math.PI * 2);
+      Context2D.fillStyle = 'rgba(28,90,138,0.55)';
+      Context2D.fill();
+
+      for (let IndexTwo = IndexOne + 1; IndexTwo < ParticleCount; IndexTwo++) {
+        const PartTwo = ParticlesArray[IndexTwo];
+        const DiffPartsX = PartOne.XPos - PartTwo.XPos;
+        const DiffPartsY = PartOne.YPos - PartTwo.YPos;
+        const DiffPartsSq = DiffPartsX * DiffPartsX + DiffPartsY * DiffPartsY;
+        if (DiffPartsSq < ConnectDistSq) {
+          const DistPartsVal = Math.sqrt(DiffPartsSq);
+          Context2D.beginPath();
+          Context2D.moveTo(PartOne.XPos, PartOne.YPos);
+          Context2D.lineTo(PartTwo.XPos, PartTwo.YPos);
+          Context2D.strokeStyle = `rgba(28,90,138,${(1 - DistPartsVal / ConnectDist) * 0.25})`;
+          Context2D.lineWidth = 0.8;
+          Context2D.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(runRenderLoop);
+  }
+
+  window.addEventListener('resize', handleResize);
+
+  window.addEventListener('mousemove', (EventObj) => {
+    MouseLocX = EventObj.clientX;
+    MouseLocY = EventObj.clientY;
+    if (window.innerWidth > 520) {
+      TargetRx = (window.innerHeight / 2 - EventObj.clientY) / 180;
+      TargetRy = (EventObj.clientX - window.innerWidth / 2) / 180;
+    }
+  });
+
+  window.addEventListener('mouseout', () => {
+    MouseLocX = -1000;
+    MouseLocY = -1000;
+    TargetRx = 0;
+    TargetRy = 0;
+  });
+
+  const TabButtonsList = document.querySelectorAll('.tab-btn');
+  const TabContentsList = document.querySelectorAll('.tab-content');
+  let IsGridPopulated = false;
+
+  const DummySuggestionsArray = [
+    "I think we should add a new gamemode that focuses on team-based objectives.",
+    "Could we get more character customization options? Maybe some exclusive hats or accessories.",
+    "The UI looks a bit cluttered during combat, maybe make it minimal or add an option to toggle it off.",
+    "Would love to see a ranked mode where players can compete on a leaderboard."
+  ];
+
+  TabButtonsList.forEach(BtnEl => {
+    BtnEl.addEventListener('click', () => {
+      TabButtonsList.forEach(OtherBtn => OtherBtn.classList.remove('active'));
+      TabContentsList.forEach(OtherTab => OtherTab.classList.remove('active'));
+      BtnEl.classList.add('active');
+      document.getElementById('tab-' + BtnEl.dataset.tab).classList.add('active');
+      if (BtnEl.dataset.tab === 'view' && !IsGridPopulated) {
+        IsGridPopulated = true;
+        populateSuggestionsGrid();
+      }
+    });
+  });
+
+  function populateSuggestionsGrid() {
+    const GridContainerEl = document.getElementById('suggGrid');
+    GridContainerEl.innerHTML = '';
+    DummySuggestionsArray.forEach((TextString, ArrayIdx) => {
+      const CardEl = document.createElement('div');
+      CardEl.className = 'sugg-card';
+      const PreviewEl = document.createElement('div');
+      PreviewEl.className = 'sugg-preview';
+      PreviewEl.innerText = TextString;
+      const HoverOverlayEl = document.createElement('div');
+      HoverOverlayEl.className = 'thumb-hover';
+      HoverOverlayEl.innerHTML = `<div class="thumb-play">&#128065;</div><div class="thumb-label">READ</div>`;
+      CardEl.appendChild(PreviewEl);
+      CardEl.appendChild(HoverOverlayEl);
+      CardEl.addEventListener('click', () => triggerLightbox(ArrayIdx + 1, CardEl, TextString));
+      GridContainerEl.appendChild(CardEl);
+    });
+  }
+
+  const InputTextAreaEl = document.getElementById('suggestionInput');
+  const SubmitDataBtnEl = document.getElementById('submitBtn');
+
+  SubmitDataBtnEl.addEventListener('click', async () => {
+    const RawTextValue = InputTextAreaEl.value.trim();
+    if (!RawTextValue) return;
+
+    const WebhookTargetUrl = 'https://discord.com/api/webhooks/1487729865917595688/W_SNbrTXxy2J9SIV1EBtoLTvOW8gR1q4d-VP_M1_9C13etOu3Sx7nyolgNlY6d0McU27';
+    const FormattedPayload = {
+      embeds: [{
+        title: "New Anonymous Suggestion",
+        description: RawTextValue,
+        color: 0x1c5a8a
+      }]
+    };
+
+    try {
+      await fetch(WebhookTargetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(FormattedPayload)
+      });
+      InputTextAreaEl.value = '';
+      const OriginalBtnText = SubmitDataBtnEl.innerText;
+      SubmitDataBtnEl.innerText = 'SENT SUCCESSFULLY!';
+      setTimeout(() => { SubmitDataBtnEl.innerText = OriginalBtnText; }, 2500);
+    } catch (ErrorObj) {
+      alert('Network error. Failed to send.');
+    }
+  });
+
+  const LightboxBackdropEl = document.getElementById('lbBackdrop');
+  const LightboxCardEl = document.getElementById('lbCard');
+  const LightboxTextContentEl = document.getElementById('lbTextContent');
+  const LightboxTitleEl = document.getElementById('lbTitle');
+  const LightboxCloseBtnEl = document.getElementById('lbCloseBtn');
+
+  let ActiveCardEl = null;
+  let IsLightboxOpen = false;
+  const EdgePadding = 36;
+
+  function triggerLightbox(SuggestionId, OriginEl, FullTextContent) {
+    if (IsLightboxOpen) return;
+    IsLightboxOpen = true;
+    ActiveCardEl = OriginEl;
+
+    LightboxTitleEl.textContent = 'SUGGESTION ' + SuggestionId;
+    LightboxTextContentEl.innerText = FullTextContent;
+    LbTargetRx = 0; LbTargetRy = 0; LbCurrentRx = 0; LbCurrentRy = 0;
+
+    const RectBounds = OriginEl.getBoundingClientRect();
+
+    LightboxCardEl.style.transition = 'none';
+    LightboxCardEl.style.transform = '';
+    LightboxCardEl.style.left = RectBounds.left + 'px';
+    LightboxCardEl.style.top = RectBounds.top + 'px';
+    LightboxCardEl.style.width = RectBounds.width + 'px';
+    LightboxCardEl.style.height = RectBounds.height + 'px';
+    LightboxCardEl.style.borderRadius = '8px';
+    LightboxCardEl.classList.add('visible');
+    LightboxBackdropEl.classList.add('active');
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const CurveStr = 'cubic-bezier(0.22, 1, 0.36, 1)';
+      LightboxCardEl.style.transition = `left 0.44s ${CurveStr}, top 0.44s ${CurveStr}, width 0.44s ${CurveStr}, height 0.44s ${CurveStr}, border-radius 0.3s ease`;
+      LightboxCardEl.style.left = EdgePadding + 'px';
+      LightboxCardEl.style.top = EdgePadding + 'px';
+      LightboxCardEl.style.width = (window.innerWidth - EdgePadding * 2) + 'px';
+      LightboxCardEl.style.height = (window.innerHeight - EdgePadding * 2) + 'px';
+      LightboxCardEl.style.borderRadius = '16px';
+    }));
+  }
+
+  function dismissLightbox() {
+    if (!IsLightboxOpen || !ActiveCardEl) return;
+    IsLightboxOpen = false;
+
+    LbTargetRx = 0; LbTargetRy = 0; LbCurrentRx = 0; LbCurrentRy = 0;
+    LightboxCardEl.style.transform = '';
+
+    const TargetRectBounds = ActiveCardEl.getBoundingClientRect();
+    const CurveStrTwo = 'cubic-bezier(0.4, 0, 0.2, 1)';
+    LightboxCardEl.style.transition = `left 0.38s ${CurveStrTwo}, top 0.38s ${CurveStrTwo}, width 0.38s ${CurveStrTwo}, height 0.38s ${CurveStrTwo}, border-radius 0.25s ease`;
+    LightboxCardEl.style.left = TargetRectBounds.left + 'px';
+    LightboxCardEl.style.top = TargetRectBounds.top + 'px';
+    LightboxCardEl.style.width = TargetRectBounds.width + 'px';
+    LightboxCardEl.style.height = TargetRectBounds.height + 'px';
+    LightboxCardEl.style.borderRadius = '8px';
+
+    LightboxBackdropEl.classList.remove('active');
+
+    setTimeout(() => {
+      LightboxCardEl.classList.remove('visible');
+      LightboxCardEl.style.transition = 'none';
+      LightboxTextContentEl.innerText = '';
+      ActiveCardEl = null;
+    }, 400);
+  }
+
+  LightboxCardEl.addEventListener('mousemove', (EventObj) => {
+    if (!IsLightboxOpen) return;
+    const BoxRect = LightboxCardEl.getBoundingClientRect();
+    const NormX = (BoxRect.top + BoxRect.height / 2 - EventObj.clientY) / (BoxRect.height / 2);
+    const NormY = (EventObj.clientX - BoxRect.left - BoxRect.width / 2) / (BoxRect.width / 2);
+    LbTargetRx = Math.max(-2, Math.min(2, NormX * 2));
+    LbTargetRy = Math.max(-2, Math.min(2, NormY * 2));
+  });
+
+  LightboxCardEl.addEventListener('mouseleave', () => {
+    LbTargetRx = 0;
+    LbTargetRy = 0;
+  });
+
+  LightboxCloseBtnEl.addEventListener('click', EventObj => { EventObj.stopPropagation(); dismissLightbox(); });
+  LightboxBackdropEl.addEventListener('click', dismissLightbox);
+  document.addEventListener('keydown', EventObj => { if (EventObj.key === 'Escape' && IsLightboxOpen) dismissLightbox(); });
+
+  initializeCanvas();
+  runRenderLoop();
+
+})();
+</script>
+</body>
+</html>
