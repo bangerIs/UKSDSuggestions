@@ -18,6 +18,7 @@
   --text:    #0d2d45;
   --textdim: #3a6a8a;
   --white:   #f0f8ff;
+  --danger:  #d93838;
 }
 
 html { scroll-behavior: smooth; }
@@ -295,6 +296,7 @@ body {
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   pointer-events: none;
+  width: 100%;
 }
 
 .thumb-hover {
@@ -329,6 +331,35 @@ body {
   font-size: 0.9rem;
   letter-spacing: 0.08em;
   color: var(--accent);
+}
+
+.delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  background: var(--danger);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.sugg-card:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  transform: scale(1.1);
 }
 
 .lb-backdrop {
@@ -513,6 +544,7 @@ body {
   const canvasEl = document.getElementById('particlesCanvas');
   const context2D = canvasEl.getContext('2d');
   const mainCardEl = document.getElementById('mainCard');
+  const backendUrl = 'https://barbbot-cv7d.onrender.com';
 
   let screenWidth, screenHeight, particlesArray;
   let mouseLocX = -1000;
@@ -642,18 +674,42 @@ body {
       btnEl.classList.add('active');
       document.getElementById('tab-' + btnEl.dataset.tab).classList.add('active');
       if (btnEl.dataset.tab === 'view' && !isGridPopulated) {
-        isGridPopulated = true;
         fetchSuggestionsGrid();
       }
     });
   });
 
+  async function deleteSuggestion(messageId, cardEl) {
+    const adminPass = prompt("Enter Admin Password to delete this suggestion:");
+    if (!adminPass) return;
+
+    try {
+      const deleteResponse = await fetch(`${backendUrl}/api/suggestions/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': adminPass
+        }
+      });
+
+      if (deleteResponse.ok) {
+        cardEl.remove();
+        alert('Deleted successfully!');
+      } else {
+        alert('Failed to delete. Incorrect password or server error.');
+      }
+    } catch (networkError) {
+      alert('Network error. Failed to reach server.');
+    }
+  }
+
   async function fetchSuggestionsGrid() {
+    isGridPopulated = true;
     const gridContainerEl = document.getElementById('suggGrid');
-    const loadingTextEl = document.getElementById('loadingText');
+    
+    gridContainerEl.innerHTML = '<div class="loading-text" id="loadingText">Fetching suggestions...</div>';
     
     try {
-      const apiResponse = await fetch('https://barbbot-cv7d.onrender.com/api/suggestions');
+      const apiResponse = await fetch(`${backendUrl}/api/suggestions`);
       if (!apiResponse.ok) throw new Error('Network response was not ok');
       const apiData = await apiResponse.json();
       
@@ -667,19 +723,34 @@ body {
       apiData.forEach((suggObj, arrayIdx) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'sugg-card';
+        
         const previewEl = document.createElement('div');
         previewEl.className = 'sugg-preview';
         previewEl.innerText = suggObj.content;
+        
         const hoverOverlayEl = document.createElement('div');
         hoverOverlayEl.className = 'thumb-hover';
         hoverOverlayEl.innerHTML = `<div class="thumb-play">&#128065;</div><div class="thumb-label">READ</div>`;
+        
+        const deleteBtnEl = document.createElement('button');
+        deleteBtnEl.className = 'delete-btn';
+        deleteBtnEl.innerHTML = '&#128465;'; 
+        
+        deleteBtnEl.addEventListener('click', (eventObj) => {
+          eventObj.stopPropagation();
+          deleteSuggestion(suggObj.id, cardEl);
+        });
+
         cardEl.appendChild(previewEl);
         cardEl.appendChild(hoverOverlayEl);
+        cardEl.appendChild(deleteBtnEl);
+        
         cardEl.addEventListener('click', () => triggerLightbox(arrayIdx + 1, cardEl, suggObj.content));
         gridContainerEl.appendChild(cardEl);
       });
     } catch (fetchError) {
-      loadingTextEl.innerText = 'Failed to load suggestions. Bot might be sleeping.';
+      gridContainerEl.innerHTML = '<div class="loading-text">Failed to load suggestions. Bot might be sleeping.</div>';
+      isGridPopulated = false;
     }
   }
 
@@ -690,29 +761,31 @@ body {
     const rawTextValue = inputTextAreaEl.value.trim();
     if (!rawTextValue) return;
 
-    const webhookTargetUrl = 'https://discord.com/api/webhooks/1487729865917595688/W_SNbrTXxy2J9SIV1EBtoLTvOW8gR1q4d-VP_M1_9C13etOu3Sx7nyolgNlY6d0McU27';
-    const formattedPayload = {
-      embeds: [{
-        title: "New Anonymous Suggestion",
-        description: rawTextValue,
-        color: 0x1c5a8a
-      }]
-    };
+    submitDataBtnEl.innerText = 'SENDING...';
+    submitDataBtnEl.disabled = true;
 
     try {
-      await fetch(webhookTargetUrl, {
+      const postResponse = await fetch(`${backendUrl}/api/suggestions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formattedPayload)
+        body: JSON.stringify({ text: rawTextValue })
       });
-      inputTextAreaEl.value = '';
-      const originalBtnText = submitDataBtnEl.innerText;
-      submitDataBtnEl.innerText = 'SENT SUCCESSFULLY!';
-      isGridPopulated = false; 
-      setTimeout(() => { submitDataBtnEl.innerText = originalBtnText; }, 2500);
+
+      if (postResponse.ok) {
+        inputTextAreaEl.value = '';
+        submitDataBtnEl.innerText = 'SENT SUCCESSFULLY!';
+        isGridPopulated = false; 
+      } else {
+        submitDataBtnEl.innerText = 'FAILED TO SEND';
+      }
     } catch (networkError) {
-      alert('Network error. Failed to send.');
+      submitDataBtnEl.innerText = 'NETWORK ERROR';
     }
+
+    setTimeout(() => {
+      submitDataBtnEl.innerText = 'SEND SUGGESTION';
+      submitDataBtnEl.disabled = false;
+    }, 2500);
   });
 
   const lightboxBackdropEl = document.getElementById('lbBackdrop');
